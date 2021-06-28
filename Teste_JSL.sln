@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31105.61
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Teste_JSL", "Teste_JSL\Teste_JSL.csproj", "{6B20300E-4204-4C74-926E-2CD18D929770}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6B20300E-4204-4C74-926E-2CD18D929770}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B20300E-4204-4C74-926E-2CD18D929770}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B20300E-4204-4C74-926E-2CD18D929770}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B20300E-4204-4C74-926E-2CD18D929770}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EDAFA200-F86E-43F5-95A2-0CA0D12C86ED}
+	EndGlobalSection
+EndGlobal
