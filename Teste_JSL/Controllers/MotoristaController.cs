@@ -15,7 +15,7 @@ namespace Teste_JSL.Controllers
     public class MotoristaController : ControllerBase
     {
         [HttpPost]
-        public JsonResult Cadastrar (Motorista motorista)
+        public JsonResult Cadastrar(Motorista motorista)
         {
 
             MotoristaDAO motoristaDAO = new MotoristaDAO();
@@ -46,7 +46,7 @@ namespace Teste_JSL.Controllers
             //Alimentando a variavel com o retorno do método
             var motorista = motoristaDAO.Listar();
 
-            //Alimentando a Lista
+            //Alimentando a Lista para ser exibida como Json no response da chamadda
             for (int i = 0; i < motorista.Count; i++)
             {
                 motoristaDTO.id = motorista[i].Id;
@@ -60,42 +60,60 @@ namespace Teste_JSL.Controllers
                 motoristaDTO.Endereco = new EnderecoDTO
                 {
 
-                    Cep = endereco[i].Cep.ToString(),
-                    Logradouro = endereco[i].Logradouro.ToString(),
-                    Complemento = endereco[i].Complemento.ToString(),
-                    Bairro = endereco[i].Bairro.ToString(),
-                    Localidade = endereco[i].Localidade.ToString(),
-                    UF = endereco[i].UF.ToString(),
-                    NumeroResidencial = endereco[i].NumeroResidencial.ToString()
+                    Cep = endereco[1].Cep.ToString(),
+                    Logradouro = endereco[1].Logradouro.ToString(),
+                    Complemento = endereco[1].Complemento.ToString(),
+                    Bairro = endereco[1].Bairro.ToString(),
+                    Localidade = endereco[1].Localidade.ToString(),
+                    UF = endereco[1].UF.ToString(),
+                    NumeroResidencial = endereco[1].NumeroResidencial.ToString()
                 };
 
                 var caminhao = caminhoesDAO.ListarUnico(motorista[i].Caminhao.Id.ToString());
 
                 motoristaDTO.Caminhao = new CaminhaoDTO
                 {
-                    Marca = caminhao[i].Marca,
-                    Modelo = caminhao[i].Modelo,
-                    Placa = caminhao[i].Placa,
-                    Eixos = caminhao[i].Eixos
+                    Marca = caminhao[1].Marca.ToString(),
+                    Modelo = caminhao[1].Modelo.ToString(),
+                    Placa = caminhao[1].Placa.ToString(),
+                    Eixos = caminhao[1].Eixos.ToString()
                 };
 
                 list.Add(motoristaDTO);
 
             }
-            
+
             return new JsonResult(list);
         }
 
         [HttpDelete]
-        public JsonResult Excluir(Motorista motorista)
+        public JsonResult Excluir(int id)
         {
-            return new JsonResult("");
+            MotoristaDAO motoristaDAO = new MotoristaDAO();
+
+            motoristaDAO.Deletar(id);
+
+            return new JsonResult($"Motorista deletado com sucesso!");
         }
 
         [HttpPut]
         public JsonResult Editar(Motorista motorista)
         {
-            return new JsonResult("");
+
+            MotoristaDAO motoristaDAO = new MotoristaDAO();
+            CaminhaoDAO caminhaoDAO = new CaminhaoDAO();
+            EnderecoDAO enderecoDAO = new EnderecoDAO();
+            MotoristaDTO motoristaDTO = new MotoristaDTO();
+
+            var retMotorista = motoristaDAO.Update(motorista);
+
+            enderecoDAO.Update(retMotorista[0].Endereco);
+
+            caminhaoDAO.Update(retMotorista[0].Caminhao);
+
+             
+
+            return new JsonResult($"Motorista {retMotorista[0].Nome} atualizado com sucesso!");
         }
 
     }

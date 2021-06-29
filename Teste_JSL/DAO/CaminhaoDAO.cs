@@ -98,7 +98,7 @@ namespace Teste_JSL.DAO
             catch (SqlException ex)
             {
                 //Aprensenta o erro no console
-                Console.WriteLine("Erro ao cadastrar motorista!\nMotivo: " + ex.GetBaseException());
+                Console.WriteLine("Erro ao Listar Caminhao!\nMotivo: " + ex.GetBaseException());
                 //Trata a exceção
                 throw;
             }
@@ -153,7 +153,7 @@ namespace Teste_JSL.DAO
             catch (SqlException ex)
             {
                 //Aprensenta o erro no console
-                Console.WriteLine("Erro ao cadastrar motorista!\nMotivo: " + ex.GetBaseException());
+                Console.WriteLine("Erro ao Listar Caminhao!\nMotivo: " + ex.GetBaseException());
                 //Trata a exceção
                 throw;
             }
@@ -164,6 +164,57 @@ namespace Teste_JSL.DAO
             }
 
             return lsCaminhao;
+        }
+
+        public bool Update(Caminhao caminhao)
+        {
+            //Inicializa as variáveis necessárias
+            //Variável Auxiliar
+            bool aux = false;
+            //Objeto de conexão
+            SqlConnection conexao = null;
+
+            //Comando sql
+            string sql = "Update Caminhoes set marca = @marca, modelo = @modelo, placa = @placa, eixos = @eixos where id = @id)";
+
+            //Início do bloco com risco de exceções                        
+            try
+            {
+                //Obtém conexão
+                conexao = SQLServer.GetConnection();
+
+                //Cria um comando especificando qual script e em qual conexão
+                using SqlCommand cmd = new SqlCommand(sql, conexao);
+
+                //Adiciona os parâmetros para evitar Injeção SQL
+                cmd.Parameters.AddWithValue("@marca", caminhao.Marca);
+                cmd.Parameters.AddWithValue("@modelo", caminhao.Modelo);
+                cmd.Parameters.AddWithValue("@placa", caminhao.Placa);
+                cmd.Parameters.AddWithValue("@eixos", caminhao.Eixos);
+                cmd.Parameters.AddWithValue("@id", caminhao.Id);
+
+
+                //Executa o comando na base de dados
+                cmd.ExecuteNonQuery();
+
+                aux = true;
+            }
+            //Caso aconteça alguma falha
+            catch (SqlException ex)
+            {
+                //Aprensenta o erro no console
+                Console.WriteLine("Erro ao cadastrar endereço!\nMotivo: " + ex.GetBaseException());
+                //Trata a exceção
+                throw;
+            }
+            finally
+            {
+                //Fecha a conexão
+                SQLServer.CloseConnection(conexao);
+            }
+
+            //Retorna situação (true/false)
+            return aux;
         }
     }
 }

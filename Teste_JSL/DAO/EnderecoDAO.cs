@@ -121,5 +121,59 @@ namespace Teste_JSL.DAO
 
             return lsEndereco;
         }
+
+        //Método que atualiza um endereço
+        public bool Update(Endereco endereco)
+        {
+            //Inicializa as variáveis necessárias
+            //Variável Auxiliar
+            bool aux = false;
+            //Objeto de conexão
+            SqlConnection conexao = null;
+
+            //Comando sql
+            string sql = "Update Enderecos set cep = @cep, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, localidade = @localidade, uf = @uf, numero_residencial = @numero_residencial where id = @id)";
+
+            //Início do bloco com risco de exceções                        
+            try
+            {
+                //Obtém conexão
+                conexao = SQLServer.GetConnection();
+
+                //Cria um comando especificando qual script e em qual conexão
+                using SqlCommand cmd = new SqlCommand(sql, conexao);
+
+                //Adiciona os parâmetros para evitar Injeção SQL
+                cmd.Parameters.AddWithValue("@cep", endereco.Cep);
+                cmd.Parameters.AddWithValue("@logradouro", endereco.Logradouro);
+                cmd.Parameters.AddWithValue("@complemento", endereco.Complemento);
+                cmd.Parameters.AddWithValue("@bairro", endereco.Bairro);
+                cmd.Parameters.AddWithValue("@localidade", endereco.Localidade);
+                cmd.Parameters.AddWithValue("@uf", endereco.UF);
+                cmd.Parameters.AddWithValue("@numero_residencial", endereco.NumeroResidencial);
+                cmd.Parameters.AddWithValue("@id", endereco.Id);
+
+                //Executa o comando na base de dados
+                endereco.Id = Convert.ToInt32(cmd.ExecuteScalar());
+
+                aux = true;
+            }
+            //Caso aconteça alguma falha
+            catch (SqlException ex)
+            {
+                //Aprensenta o erro no console
+                Console.WriteLine("Erro ao cadastrar endereço!\nMotivo: " + ex.GetBaseException());
+                //Trata a exceção
+                throw;
+            }
+            finally
+            {
+                //Fecha a conexão
+                SQLServer.CloseConnection(conexao);
+            }
+
+            //Retorna situação (true/false)
+            return aux;
+        }
     }
 }
