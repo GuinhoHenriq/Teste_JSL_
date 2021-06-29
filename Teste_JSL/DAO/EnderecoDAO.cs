@@ -11,7 +11,11 @@ namespace Teste_JSL.DAO
 {
     public class EnderecoDAO
     {
-        //Método que cadastra um endereço
+        /// <summary>
+        /// Cadastra um endereço
+        /// </summary>
+        /// <param name="endereco"></param>
+        /// <returns></returns>
         public bool Cadastrar(Endereco endereco)
         {
             //Inicializa as variáveis necessárias
@@ -39,7 +43,7 @@ namespace Teste_JSL.DAO
                 cmd.Parameters.AddWithValue("@bairro", endereco.Bairro);
                 cmd.Parameters.AddWithValue("@localidade", endereco.Localidade);
                 cmd.Parameters.AddWithValue("@uf", endereco.UF);
-                cmd.Parameters.AddWithValue("@numero_residencial", endereco.NumeroResidencial);
+                cmd.Parameters.AddWithValue("@numero_residencial", endereco.Numero);
 
                 //Executa o comando na base de dados
                 endereco.Id = Convert.ToInt32(cmd.ExecuteScalar());
@@ -64,9 +68,76 @@ namespace Teste_JSL.DAO
             return aux;
         }
 
+        /// <summary>
+        /// Lista todos os endereços
+        /// </summary>
+        /// <returns></returns>
+        public List<Endereco> Listar()
+        {
+            //Criando uma lista do tipo Endereco
+
+            List<Endereco> lsEndereco = new List<Endereco>();
+
+            SqlConnection conexao = null;
+
+            //Comando sql
+            string sql = "SELECT * FROM Enderecos";
+
+            //Início do bloco com risco de exceções                        
+            try
+            {
+                //Obtém conexão
+                conexao = SQLServer.GetConnection();
+
+                //Cria um comando especificando qual script e em qual conexão
+                using SqlCommand cmd = new SqlCommand(sql, conexao);
+
+                //Executa o comando na base de dados
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                //Alimenta o objeto com o retorno do Select
+                while (reader.Read())
+                {
+                    Endereco endereco = new Endereco();
+                    endereco.Id = Convert.ToInt32(reader["id"]);
+                    endereco.Cep = (string)reader["cep"];
+                    endereco.Logradouro = (string)reader["logradouro"];
+                    endereco.Complemento = (string)reader["complemento"];
+                    endereco.Bairro = (string)reader["bairro"];
+                    endereco.Localidade = (string)reader["localidade"];
+                    endereco.UF = (string)reader["uf"];
+                    endereco.Numero = (string)reader["numero_residencial"];
+
+                    //Adiciona o objeto na lista
+                    lsEndereco.Add(endereco);
+                }
+            }
+            //Caso aconteça alguma falha
+            catch (SqlException ex)
+            {
+                //Aprensenta o erro no console
+                Console.WriteLine("Erro ao listar endereço!\nMotivo: " + ex.GetBaseException());
+                //Trata a exceção
+                throw;
+            }
+            finally
+            {
+                //Fecha a conexão
+                SQLServer.CloseConnection(conexao);
+            }
+
+            //Retorna a lista para o Endpoint chamado
+            return lsEndereco;
+        }
+
+        /// <summary>
+        /// Lista um unico endereco
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public List<Endereco> ListarUnico(string id)
         {
-            //Criando uma lista do tipo Motorista
+            //Criando uma lista do tipo Endereco
 
             List<Endereco> lsEndereco = new List<Endereco>();
 
@@ -90,6 +161,7 @@ namespace Teste_JSL.DAO
                 //Executa o comando na base de dados
                 SqlDataReader reader = cmd.ExecuteReader();
 
+                //Alimenta o objeto com o retorno do Select
                 while (reader.Read())
                 {
                     Endereco endereco = new Endereco();
@@ -100,8 +172,9 @@ namespace Teste_JSL.DAO
                     endereco.Bairro = (string)reader["bairro"];
                     endereco.Localidade = (string)reader["localidade"];
                     endereco.UF = (string)reader["uf"];
-                    endereco.NumeroResidencial = (string)reader["numero_residencial"];
+                    endereco.Numero = (string)reader["numero_residencial"];
 
+                    //Adiciona o objeto na lista
                     lsEndereco.Add(endereco);
                 }
             }
@@ -109,7 +182,7 @@ namespace Teste_JSL.DAO
             catch (SqlException ex)
             {
                 //Aprensenta o erro no console
-                Console.WriteLine("Erro ao cadastrar motorista!\nMotivo: " + ex.GetBaseException());
+                Console.WriteLine("Erro ao listar endereço!\nMotivo: " + ex.GetBaseException());
                 //Trata a exceção
                 throw;
             }
@@ -119,10 +192,15 @@ namespace Teste_JSL.DAO
                 SQLServer.CloseConnection(conexao);
             }
 
+            //Retorna a lista para o Endpoint chamado
             return lsEndereco;
         }
 
-        //Método que atualiza um endereço
+        /// <summary>
+        /// Atualiza um endereco
+        /// </summary>
+        /// <param name="endereco"></param>
+        /// <returns></returns>
         public bool Update(Endereco endereco)
         {
             //Inicializa as variáveis necessárias
@@ -132,7 +210,7 @@ namespace Teste_JSL.DAO
             SqlConnection conexao = null;
 
             //Comando sql
-            string sql = "Update Enderecos set cep = @cep, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, localidade = @localidade, uf = @uf, numero_residencial = @numero_residencial where id = @id)";
+            string sql = "Update Enderecos set cep = @cep, logradouro = @logradouro, complemento = @complemento, bairro = @bairro, localidade = @localidade, uf = @uf, numero_residencial = @numero_residencial where id = @id";
 
             //Início do bloco com risco de exceções                        
             try
@@ -150,7 +228,7 @@ namespace Teste_JSL.DAO
                 cmd.Parameters.AddWithValue("@bairro", endereco.Bairro);
                 cmd.Parameters.AddWithValue("@localidade", endereco.Localidade);
                 cmd.Parameters.AddWithValue("@uf", endereco.UF);
-                cmd.Parameters.AddWithValue("@numero_residencial", endereco.NumeroResidencial);
+                cmd.Parameters.AddWithValue("@numero_residencial", endereco.Numero);
                 cmd.Parameters.AddWithValue("@id", endereco.Id);
 
                 //Executa o comando na base de dados
@@ -162,7 +240,58 @@ namespace Teste_JSL.DAO
             catch (SqlException ex)
             {
                 //Aprensenta o erro no console
-                Console.WriteLine("Erro ao cadastrar endereço!\nMotivo: " + ex.GetBaseException());
+                Console.WriteLine("Erro ao atualizar endereço!\nMotivo: " + ex.GetBaseException());
+                //Trata a exceção
+                throw;
+            }
+            finally
+            {
+                //Fecha a conexão
+                SQLServer.CloseConnection(conexao);
+            }
+
+            //Retorna situação (true/false)
+            return aux;
+        }
+
+        /// <summary>
+        /// Deleta um endereco
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public bool Delete(int id)
+        {
+            //Inicializa as variáveis necessárias
+            //Variável Auxiliar
+            bool aux = false;
+            //Objeto de conexão
+            SqlConnection conexao = null;
+
+            //Comando sql
+            string sql = "Delete Enderecos where id = @id";
+
+            //Início do bloco com risco de exceções                        
+            try
+            {
+                //Obtém conexão
+                conexao = SQLServer.GetConnection();
+
+                //Cria um comando especificando qual script e em qual conexão
+                using SqlCommand cmd = new SqlCommand(sql, conexao);
+
+                //Adiciona os parâmetros para evitar Injeção SQL
+                cmd.Parameters.AddWithValue("@id", id);
+
+                //Executa o comando na base de dados
+                cmd.ExecuteNonQuery();
+
+                aux = true;
+            }
+            //Caso aconteça alguma falha
+            catch (SqlException ex)
+            {
+                //Aprensenta o erro no console
+                Console.WriteLine("Erro ao deletar endereço!\nMotivo: " + ex.GetBaseException());
                 //Trata a exceção
                 throw;
             }

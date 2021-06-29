@@ -11,7 +11,11 @@ namespace Teste_JSL.DAO
 {
     public class MotoristaDAO
     {
-        //Método que cadastra um motorista
+        /// <summary>
+        /// Cadastra o motorista
+        /// </summary>
+        /// <param name="motorista"></param>
+        /// <returns></returns>
         public bool Cadastrar(Motorista motorista)
         {
             //Inicializa as variáveis necessárias
@@ -37,6 +41,7 @@ namespace Teste_JSL.DAO
                 cmd.Parameters.AddWithValue("@sobrenome", motorista.Sobrenome);
                 cmd.Parameters.AddWithValue("@id_caminhao", motorista.Caminhao.Id);
                 cmd.Parameters.AddWithValue("@id_endereco", motorista.Endereco.Id);
+
                 //Executa o comando na base de dados
                 cmd.ExecuteNonQuery();
 
@@ -60,7 +65,10 @@ namespace Teste_JSL.DAO
             return aux;
         }
 
-        // Metodo que lista todos os motoristas
+        /// <summary>
+        /// Lista todos os motoristas
+        /// </summary>
+        /// <returns></returns>
         public List<Motorista> Listar()
         {
             //Criando uma lista do tipo Motorista
@@ -84,6 +92,7 @@ namespace Teste_JSL.DAO
                 //Executa o comando na base de dados
                 SqlDataReader reader = cmd.ExecuteReader();
 
+                //Alimenta o objeto com o retorno do Select
                 while (reader.Read())
                 {
                     Motorista motoristas = new Motorista();
@@ -97,6 +106,8 @@ namespace Teste_JSL.DAO
                     {
                         Id = Convert.ToInt32(reader["id_endereco"])
                     };
+
+                    //Adiciona o objeto na lista
                     lsMotorista.Add(motoristas);
                 }
             }
@@ -114,10 +125,83 @@ namespace Teste_JSL.DAO
                 SQLServer.CloseConnection(conexao);
             }
 
+            //Retorna a lista para o Endpoint chamado
             return lsMotorista;
         }
 
-        //Método que cadastra um motorista
+        /// <summary>
+        /// Lista um unico motorista
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public List<Motorista> ListarUnico(int id)
+        {
+            //Criando uma lista do tipo Motorista
+            List<Motorista> lsMotorista = new List<Motorista>();
+
+            SqlConnection conexao = null;
+
+            //Comando sql
+            string sql = "SELECT * FROM Motoristas where id = @id";
+
+            //Início do bloco com risco de exceções                        
+            try
+            {
+                //Obtém conexão
+                conexao = SQLServer.GetConnection();
+
+                //Cria um comando especificando qual script e em qual conexão
+                using SqlCommand cmd = new SqlCommand(sql, conexao);
+
+                //Adiciona os parâmetros para evitar Injeção SQL
+                cmd.Parameters.AddWithValue("@id", id);
+
+                //Executa o comando na base de dados
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                //Alimenta o objeto com o retorno do Select
+                while (reader.Read())
+                {
+                    Motorista motoristas = new Motorista();
+                    motoristas.Id = Convert.ToInt32(reader["id"]);
+                    motoristas.Nome = (string)reader["nome"];
+                    motoristas.Sobrenome = (string)reader["sobrenome"];
+                    motoristas.Caminhao = new Caminhao
+                    {
+                        Id = Convert.ToInt32(reader["id_caminhao"])
+                    };
+                    motoristas.Endereco = new Endereco
+                    {
+                        Id = Convert.ToInt32(reader["id_endereco"])
+                    };
+
+                    //Adiciona o objeto na lista
+                    lsMotorista.Add(motoristas);
+                }
+            }
+            //Caso aconteça alguma falha
+            catch (SqlException ex)
+            {
+                //Aprensenta o erro no console
+                Console.WriteLine("Erro ao Listar motorista!\nMotivo: " + ex.GetBaseException());
+                //Trata a exceção
+                throw;
+            }
+            finally
+            {
+                //Fecha a conexão
+                SQLServer.CloseConnection(conexao);
+            }
+
+            //Retorna a lista para o Endpoint chamado
+            return lsMotorista;
+        }
+
+        /// <summary>
+        /// Deleta um motorista
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public bool Deletar(int id)
         {
             //Inicializa as variáveis necessárias
@@ -150,7 +234,7 @@ namespace Teste_JSL.DAO
             catch (SqlException ex)
             {
                 //Aprensenta o erro no console
-                Console.WriteLine("Erro ao Deletar o motorista!\nMotivo: " + ex.GetBaseException());
+                Console.WriteLine("Erro ao deletar motorista!\nMotivo: " + ex.GetBaseException());
                 //Trata a exceção
                 throw;
             }
@@ -164,66 +248,11 @@ namespace Teste_JSL.DAO
             return aux;
         }
 
-        public List<Motorista> ListarUnico(int id)
-        {
-            //Criando uma lista do tipo Motorista
-
-            List<Motorista> lsMotorista = new List<Motorista>();
-
-            SqlConnection conexao = null;
-
-            //Comando sql
-            string sql = "SELECT * FROM Motoristas where id = @id";
-
-            //Início do bloco com risco de exceções                        
-            try
-            {
-                //Obtém conexão
-                conexao = SQLServer.GetConnection();
-
-                //Cria um comando especificando qual script e em qual conexão
-                using SqlCommand cmd = new SqlCommand(sql, conexao);
-
-                cmd.Parameters.AddWithValue("@id", id);
-
-                //Executa o comando na base de dados
-                SqlDataReader reader = cmd.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    Motorista motoristas = new Motorista();
-                    motoristas.Id = Convert.ToInt32(reader["id"]);
-                    motoristas.Nome = (string)reader["nome"];
-                    motoristas.Sobrenome = (string)reader["sobrenome"];
-                    motoristas.Caminhao = new Caminhao
-                    {
-                        Id = Convert.ToInt32(reader["id_caminhao"])
-                    };
-                    motoristas.Endereco = new Endereco
-                    {
-                        Id = Convert.ToInt32(reader["id_endereco"])
-                    };
-                    lsMotorista.Add(motoristas);
-                }
-            }
-            //Caso aconteça alguma falha
-            catch (SqlException ex)
-            {
-                //Aprensenta o erro no console
-                Console.WriteLine("Erro ao Listar os motoristas!\nMotivo: " + ex.GetBaseException());
-                //Trata a exceção
-                throw;
-            }
-            finally
-            {
-                //Fecha a conexão
-                SQLServer.CloseConnection(conexao);
-            }
-
-            return lsMotorista;
-        }
-
-        //Método que cadastra um motorista
+        /// <summary>
+        /// Atualiza um motorista
+        /// </summary>
+        /// <param name="motorista"></param>
+        /// <returns></returns>
         public List<Motorista> Update(Motorista motorista)
         {
             //Inicializa as variáveis necessárias
@@ -249,9 +278,8 @@ namespace Teste_JSL.DAO
                 cmd.Parameters.AddWithValue("@id", motorista.Id);
                 //Executa o comando na base de dados
                 cmd.ExecuteNonQuery();
-
-               
             }
+
             //Caso aconteça alguma falha
             catch (SqlException ex)
             {

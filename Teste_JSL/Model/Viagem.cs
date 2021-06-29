@@ -12,6 +12,6 @@ namespace Teste_JSL.Model
         public Motorista Motorista { get; set; }
         public Endereco LocalEntrega { get; set; }
         public Endereco LocalSaida { get; set; }
-        public float DistanciaEmKM { get; set; }
+        public double DistanciaEmKM { get; set; }
     }
 }

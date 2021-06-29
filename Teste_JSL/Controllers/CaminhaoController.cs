@@ -13,7 +13,11 @@ namespace Teste_JSL.Controllers
     [ApiController]
     public class CaminhaoController : Controller
     {
-
+        /// <summary>
+        /// Cadastra um caminhao
+        /// </summary>
+        /// <param name="caminhao"></param>
+        /// <returns></returns>
         [HttpPost]
         public JsonResult Cadastrar(Caminhao caminhao)
         {
@@ -23,7 +27,10 @@ namespace Teste_JSL.Controllers
 
             return new JsonResult($"Caminhao cadastrado com sucesso!");
         }
-
+        /// <summary>
+        /// Efetua a listagem de todos os caminhoes
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public JsonResult Listar()
         {
@@ -32,16 +39,48 @@ namespace Teste_JSL.Controllers
             return new JsonResult(caminhao.Listar());
         }
 
-        [HttpDelete]
-        public JsonResult Excluir(Caminhao motorista)
+        /// <summary>
+        /// Lista um unico Caminhao
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Route("ListarUnico")]
+        [HttpGet]
+        public JsonResult ListarUnico(string id)
         {
-            return new JsonResult("");
+            CaminhaoDAO caminhao = new CaminhaoDAO();
+
+            return new JsonResult(caminhao.ListarUnico(id));
         }
 
-        [HttpPut]
-        public JsonResult Editar(Caminhao motorista)
+        /// <summary>
+        /// Deleta um caminhao
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        public JsonResult Excluir(int id)
         {
-            return new JsonResult("");
+            CaminhaoDAO caminhao = new CaminhaoDAO();
+
+            caminhao.Deletar(id);
+
+            return new JsonResult("Caminhao deletado com sucesso!");
+        }
+
+        /// <summary>
+        /// Atualiza um caminhao
+        /// </summary>
+        /// <param name="caminhao"></param>
+        /// <returns></returns>
+        [HttpPut]
+        public JsonResult Atualizar(Caminhao caminhao)
+        {
+            CaminhaoDAO caminhoes = new CaminhaoDAO();
+
+            caminhoes.Update(caminhao);
+
+            return new JsonResult("Caminhao atualizado com sucesso!");
         }
     }
 }

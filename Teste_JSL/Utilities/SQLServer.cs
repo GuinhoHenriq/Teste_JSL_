@@ -7,6 +7,9 @@ using System.Data.SqlClient;
 
 namespace Teste_JSL.Utilities
 {
+    /// <summary>
+    /// Classe focada em abrir e fechar a conexao com o banco de dados
+    /// </summary>
     public static class SQLServer
     {
         public static string ConnectionString { get; set; }
